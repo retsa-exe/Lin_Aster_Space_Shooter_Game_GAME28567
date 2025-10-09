@@ -9,6 +9,8 @@ public class Alien : MonoBehaviour
 
     public float shootDuration = 2f;
 
+    public GameObject hookPrefab;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -37,6 +39,14 @@ public class Alien : MonoBehaviour
 
         }
 
-        Debug.DrawLine(transform.position, hook, Color.green);
+        Debug.DrawLine(transform.position, hook, Color.yellow);
+
+        //update the hook position
+        hookPrefab.transform.position = hook;
+
+        //set hook rotation
+        Vector3 direction = hook - transform.position;
+        float angleDegree = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        hookPrefab.transform.rotation = Quaternion.Euler(0, 0, angleDegree + 90f);
     }
 }
