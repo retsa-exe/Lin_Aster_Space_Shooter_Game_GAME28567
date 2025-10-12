@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class Alien : MonoBehaviour
 {
@@ -17,6 +18,10 @@ public class Alien : MonoBehaviour
     float shootTimer = 0f;
     public float shootSpeed = 2f;
 
+    public List<GameObject> objects;
+    public float caputureDistance = 1f;
+    public int score = 0;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -26,12 +31,16 @@ public class Alien : MonoBehaviour
         //reset the timer
         t = 0f;
         shootTimer = 0f;
+
+        //reset score
+        score = 0;
     }
 
     // Update is called once per frame
     void Update()
     {
         HookSwing();
+        ObjectCaputure();
     }
 
     public void HookSwing()
@@ -61,7 +70,7 @@ public class Alien : MonoBehaviour
             float hookX = Mathf.Cos(radius);
             float hookY = Mathf.Sin(radius);
 
-            direction = new Vector3(hookX, hookY, 0);
+            direction = new Vector3(hookX, hookY, 0).normalized;
 
             hook = transform.position + direction * hookLength;
         }
@@ -88,5 +97,23 @@ public class Alien : MonoBehaviour
         //set hook rotation
         float angleDegree = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
         hookPrefab.transform.rotation = Quaternion.Euler(0, 0, angleDegree + 90f);
+    }
+
+    public void ObjectCaputure()
+    {
+        for (int i = 0; i < objects.Count; i++)
+        {
+            GameObject obj = objects[i];
+            if (Vector3.Distance(hook, obj.transform.position) < caputureDistance)
+            {
+                obj.transform.position = hook;
+                isShooting = false;
+                shootTimer = 0f;
+
+                score++;
+                objects.Remove(obj);
+                Destroy(obj);
+            }
+        }
     }
 }
